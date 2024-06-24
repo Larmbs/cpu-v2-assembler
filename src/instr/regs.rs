@@ -50,11 +50,9 @@ pub enum Reg {
     GPR2,
 }
 impl ParseAble for Reg {
-    /// Parses out a Reg from a string representation
     fn from_str(name: &str) -> Result<Self> {
         RegNameHash.get(name).context("Invalid register").cloned()
     }
-    /// Gets the address of the Reg
     fn to_code(&self) -> u16 {
         *RegAddrHash.get(self).unwrap() as u16
     }

@@ -30,11 +30,6 @@ pub enum TextInstr {
     CMP(Reg, Reg),              // Compares Regs
 }
 impl ParseAble for TextInstr {
-    /// Converts the asm instruction into its machine code
-    fn to_code(&self) -> u16 {
-        todo!()
-    }
-    /// Gets value from text
     fn from_str(line: &str) -> Result<Self> {
         let mut iterator = line.split_whitespace().into_iter();
         // For a line to be passed it must have at least some command
@@ -42,8 +37,10 @@ impl ParseAble for TextInstr {
         let arg1 = iterator.next();
         let arg2 = iterator.next();
         let arg3 = iterator.next();
+        let arg4 = iterator.next();
 
         match command {
+            // ALU
             "SHL" | "shl" => Ok(TextInstr::SHL(
                 Reg::from_str(arg1.unwrap())?,
                 Reg::from_str(arg2.unwrap())?,
@@ -54,8 +51,89 @@ impl ParseAble for TextInstr {
                 Reg::from_str(arg2.unwrap())?,
                 Reg::from_str(arg3.unwrap())?,
             )),
-
+            "AND" | "and" => Ok(TextInstr::AND(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+                Reg::from_str(arg3.unwrap())?,
+            )),
+            "NOT" | "not" => Ok(TextInstr::NOT(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+            )),
+            "XOR" | "xor" => Ok(TextInstr::XOR(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+                Reg::from_str(arg3.unwrap())?,
+            )),
+            "OR" | "or" => Ok(TextInstr::OR(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+                Reg::from_str(arg3.unwrap())?,
+            )),
+            "ADD" | "add" => Ok(TextInstr::ADD(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+                Reg::from_str(arg3.unwrap())?,
+            )),
+            "SUB" | "sub" => Ok(TextInstr::SUB(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+                Reg::from_str(arg3.unwrap())?,
+            )),
+            "INC" | "inc" => Ok(TextInstr::INC(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+            )),
+            "DEC" | "dec" => Ok(TextInstr::DEC(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+            )),
+            // Data
+            "STR" | "str" | "STORE" | "store" => Ok(TextInstr::STR(
+                RAMAddr::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+            )),
+            "LDR" | "ldr" | "LOAD" | "load" => Ok(TextInstr::LDR(
+                Reg::from_str(arg1.unwrap())?,
+                RAMAddr::from_str(arg2.unwrap())?,
+            )),
+            "LDI" | "ldi" => Ok(TextInstr::LDI(
+                Reg::from_str(arg1.unwrap())?,
+                Val::from_str(arg2.unwrap())?,
+            )),
+            "HALT" | "halt" | "BREAK" | "break" => Ok(TextInstr::HALT),
+            // Jump instructions
+            "JMP" | "jmp" => Ok(TextInstr::JMP(
+                BoolVal::from_str(arg1.unwrap())?,
+                Val::from_str(arg2.unwrap())?,
+            )),
+            "JG" | "jg" => Ok(TextInstr::JG(
+                BoolVal::from_str(arg1.unwrap())?,
+                Val::from_str(arg2.unwrap())?,
+                Reg::from_str(arg3.unwrap())?,
+                Reg::from_str(arg4.unwrap())?,
+            )),
+            "JL" | "jl" => Ok(TextInstr::JL(
+                BoolVal::from_str(arg1.unwrap())?,
+                Val::from_str(arg2.unwrap())?,
+                Reg::from_str(arg3.unwrap())?,
+                Reg::from_str(arg4.unwrap())?,
+            )),
+            "JE" | "je" => Ok(TextInstr::JE(
+                BoolVal::from_str(arg1.unwrap())?,
+                Val::from_str(arg2.unwrap())?,
+                Reg::from_str(arg3.unwrap())?,
+                Reg::from_str(arg4.unwrap())?,
+            )),
+            // Other
+            "CMP" | "cmp" => Ok(TextInstr::CMP(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+            )),
             _ => panic!("Instruction provided was invalid"),
         }
+    }
+    fn to_code(&self) -> u16 {
+        todo!()
     }
 }

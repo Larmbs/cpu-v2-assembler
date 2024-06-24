@@ -5,9 +5,9 @@ mod instr;
 pub use instr::Program;
 
 /// DroneBoi Assembly file extension
-const DBASM_FILE: &str = ".dbasm";
+pub const DBASM_FILE: &str = ".dbasm";
 /// DroneBoi Executable file extension
-const DBMEXEC: &str = ".dbexec";
+pub const DBMEXEC: &str = ".dbexec";
 
 
 /// Parses a dbasm file into a intermediate representation
