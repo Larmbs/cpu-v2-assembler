@@ -15,5 +15,8 @@ fn main() {
     
     let output_path = args.next().unwrap_or(String::from(DEFAULT_OUT));
 
-    println!("Hello, world!");
+    let text = String::new();
+    let prog = cpu_v2_assembler::parse(text).expect("An error occured");
+    let res = cpu_v2_assembler::to_code(prog);
+    println!("{}", res);
 }

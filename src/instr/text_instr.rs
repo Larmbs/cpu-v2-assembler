@@ -20,17 +20,19 @@ pub enum TextInstr {
     STR(RAMAddr, Reg), // Store
     LDR(Reg, RAMAddr), // Load
     LDI(Reg, Val),     // Load a constant
-    HALT,              // Stop CPU
+    MOV(Reg, Reg),     // Moves between Regs
 
     // *** Control Flow ops ***
     JMP(BoolVal, Val),          // Jump
     JG(BoolVal, Val, Reg, Reg), // Jump if greater
     JL(BoolVal, Val, Reg, Reg), // Jump if less
     JE(BoolVal, Val, Reg, Reg), // Jump if equal
+
     CMP(Reg, Reg),              // Compares Regs
+    HALT,              // Stop CPU
 }
-impl ParseAble for TextInstr {
-    fn from_str(line: &str) -> Result<Self> {
+impl TextInstr {
+    pub fn from_str(line: &str) -> Result<Self> {
         let line = line.replace(",", " ");
         let mut iterator = line.split_whitespace().into_iter();
         // For a line to be passed it must have at least some command
@@ -102,7 +104,10 @@ impl ParseAble for TextInstr {
                 Reg::from_str(arg1.unwrap())?,
                 Val::from_str(arg2.unwrap())?,
             )),
-            "HALT" | "halt" | "BREAK" | "break" => Ok(TextInstr::HALT),
+            "MOVE" | "move" | "MOV" | "mov" => Ok(TextInstr::MOV(
+                Reg::from_str(arg1.unwrap())?,
+                Reg::from_str(arg2.unwrap())?,
+            )),
             // Jump instructions
             "JMP" | "jmp" => Ok(TextInstr::JMP(
                 BoolVal::from_str(arg1.unwrap())?,
@@ -131,10 +136,11 @@ impl ParseAble for TextInstr {
                 Reg::from_str(arg1.unwrap())?,
                 Reg::from_str(arg2.unwrap())?,
             )),
+            "HALT" | "halt" | "BREAK" | "break" => Ok(TextInstr::HALT),
             _ => panic!("Instruction provided was invalid"),
         }
     }
-    fn to_code(&self) -> u16 {
+    pub fn to_code(&self) -> Vec<u16> {
         match self {
             TextInstr::SHL(_, _, _) => todo!(),
             TextInstr::SHR(_, _, _) => todo!(),
@@ -146,15 +152,20 @@ impl ParseAble for TextInstr {
             TextInstr::SUB(_, _, _) => todo!(),
             TextInstr::INC(_, _) => todo!(),
             TextInstr::DEC(_, _) => todo!(),
+            
             TextInstr::STR(_, _) => todo!(),
             TextInstr::LDR(_, _) => todo!(),
             TextInstr::LDI(_, _) => todo!(),
-            TextInstr::HALT => 6 << 12,
+            TextInstr::MOV(_, _) => todo!(),
+
             TextInstr::JMP(_, _) => todo!(),
             TextInstr::JG(_, _, _, _) => todo!(),
             TextInstr::JL(_, _, _, _) => todo!(),
             TextInstr::JE(_, _, _, _) => todo!(),
+
             TextInstr::CMP(_, _) => todo!(),
+            TextInstr::HALT => vec![6 << 12],
+
         }
     }
 }
