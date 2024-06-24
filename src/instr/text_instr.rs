@@ -31,6 +31,7 @@ pub enum TextInstr {
 }
 impl ParseAble for TextInstr {
     fn from_str(line: &str) -> Result<Self> {
+        let line = line.replace(",", " ");
         let mut iterator = line.split_whitespace().into_iter();
         // For a line to be passed it must have at least some command
         let command = iterator.next().unwrap();
@@ -134,6 +135,26 @@ impl ParseAble for TextInstr {
         }
     }
     fn to_code(&self) -> u16 {
-        todo!()
+        match self {
+            TextInstr::SHL(_, _, _) => todo!(),
+            TextInstr::SHR(_, _, _) => todo!(),
+            TextInstr::AND(_, _, _) => todo!(),
+            TextInstr::NOT(_, _) => todo!(),
+            TextInstr::XOR(_, _, _) => todo!(),
+            TextInstr::OR(_, _, _) => todo!(),
+            TextInstr::ADD(_, _, _) => todo!(),
+            TextInstr::SUB(_, _, _) => todo!(),
+            TextInstr::INC(_, _) => todo!(),
+            TextInstr::DEC(_, _) => todo!(),
+            TextInstr::STR(_, _) => todo!(),
+            TextInstr::LDR(_, _) => todo!(),
+            TextInstr::LDI(_, _) => todo!(),
+            TextInstr::HALT => 6 << 12,
+            TextInstr::JMP(_, _) => todo!(),
+            TextInstr::JG(_, _, _, _) => todo!(),
+            TextInstr::JL(_, _, _, _) => todo!(),
+            TextInstr::JE(_, _, _, _) => todo!(),
+            TextInstr::CMP(_, _) => todo!(),
+        }
     }
 }
