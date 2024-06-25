@@ -23,14 +23,11 @@ pub fn parse(text: String) -> Result<Program> {
 }   
 
 /// Turns Program into a string representing itself in machine code
-pub fn to_code(program: Program) -> String {
+pub fn to_code(program: Program) -> Vec<u16> {
     let mut sections: Vec<u16> = vec![];
 
     for instruction in program.text {
         sections.extend(instruction.to_code())
     }
-
-    let str_sections: Vec<String> = sections.iter().map(|num| num.to_string()).collect();
-    let text = str_sections.join("\n");
-    text
+    sections
 }

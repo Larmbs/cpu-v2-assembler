@@ -43,6 +43,12 @@ fn main() {
     let prog = parse(text).expect("An error occurred");
     let res = to_code(prog);
 
-    fs::write(output_path, res)
+    let output: String = res.iter()
+        .enumerate()
+        .map(|(ix, num)| format!("| {:^3} | {:7} | {:#018b}\n", ix, num, num))
+        .collect();
+    let output = format!("| {:^3} | {:7} | {:18}\n", "IDX", "Decimal", "Binary") + &"-".repeat(36) + "\n" + output.as_str();
+
+    fs::write(output_path, output)
         .expect("There was an issue writing into file");
 }
