@@ -40,8 +40,8 @@ fn main() {
     let text: String = fs::read_to_string(file_path)
         .expect("There was a problem reading from that file");
 
-    let prog = cpu_v2_assembler::parse(text).expect("An error occurred");
-    let res = cpu_v2_assembler::to_code(prog);
+    let prog = parse(text).expect("An error occurred");
+    let res = to_code(prog);
 
     fs::write(output_path, res)
         .expect("There was an issue writing into file");
