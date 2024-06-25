@@ -2,7 +2,9 @@
 
 use anyhow::Result;
 mod instr;
+mod optim;
 pub use instr::{Program, TextInstr};
+use optim::optimize;
 
 /// DroneBoi Assembly file extension
 pub const DBASM_EXT: &str = "dbasm";
@@ -19,15 +21,19 @@ pub fn parse(text: String) -> Result<Program> {
         if line.trim().is_empty() {continue;}
         instructions.push(TextInstr::from_str(line)?)
     }
+
     Ok(Program { text: instructions })
 }   
 
 /// Turns Program into a string representing itself in machine code
 pub fn to_code(program: Program) -> Vec<u16> {
-    let mut sections: Vec<u16> = vec![];
+    let mut code: Vec<u16> = vec![];
 
     for instruction in program.text {
-        sections.extend(instruction.to_code())
+        code.extend(instruction.to_code())
     }
-    sections
+
+    let optimal_code = optimize(code);
+
+    optimal_code
 }
