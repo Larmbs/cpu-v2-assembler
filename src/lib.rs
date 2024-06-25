@@ -5,9 +5,9 @@ mod instr;
 pub use instr::{Program, TextInstr};
 
 /// DroneBoi Assembly file extension
-pub const DBASM_FILE: &str = ".dbasm";
+pub const DBASM_EXT: &str = "dbasm";
 /// DroneBoi Executable file extension
-pub const DBMEXEC: &str = ".dbexec";
+pub const DBMEXEC_EXT: &str = "dbexec";
 
 
 /// Parses a dbasm file into a intermediate representation
@@ -16,6 +16,7 @@ pub fn parse(text: String) -> Result<Program> {
 
     for line in text.lines() {
         if line.starts_with(";") {continue;}
+        if line.trim().is_empty() {continue;}
         instructions.push(TextInstr::from_str(line)?)
     }
     Ok(Program { text: instructions })

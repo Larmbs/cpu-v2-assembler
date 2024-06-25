@@ -1,0 +1,9 @@
+; Loading data 
+LDI rg1, 20
+LDI rg2, 120
+
+; Adding the two numbers
+ADD rg1, rg1, rg2
+
+; Putting it into RAM address 1
+STR 1, rg1

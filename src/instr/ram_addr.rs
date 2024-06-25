@@ -4,7 +4,7 @@ use super::ParseAble;
 use anyhow::Result;
 
 /// Represents a RAM address
-pub struct RAMAddr(usize);
+pub struct RAMAddr(pub usize);
 impl ParseAble for RAMAddr {
     fn from_str(text: &str) -> Result<Self>
     where

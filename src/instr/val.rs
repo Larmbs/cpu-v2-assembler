@@ -4,7 +4,7 @@ use anyhow::Result;
 use super::ParseAble;
 
 /// Represents just some 16 bit number
-pub struct Val(u16);
+pub struct Val(pub u16);
 impl ParseAble for Val {
     fn from_str(text: &str) -> Result<Self> where Self: Sized {
         let num: u16 = text.parse()?;
@@ -17,7 +17,7 @@ impl ParseAble for Val {
 }
 
 /// Boolean value can be either zero or one
-pub struct BoolVal(bool);
+pub struct BoolVal(pub bool);
 impl ParseAble for BoolVal {
     fn from_str(text: &str) -> Result<Self> where Self: Sized {
         let dir: u8 = text.parse()?;

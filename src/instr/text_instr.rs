@@ -3,6 +3,14 @@
 use super::{BoolVal, ParseAble, RAMAddr, Reg, Val};
 use anyhow::Result;
 
+const ALU: u16 = 0 << 12;
+const LOAD: u16 = 1 << 12;
+const STORE: u16 = 2 << 12;
+const MOVE: u16 = 3 << 12;
+const JUMP: u16 = 4 << 12;
+const LOADIMD: u16 = 5 << 12;
+const HALT: u16 = 6 << 12;
+
 pub enum TextInstr {
     // *** ALU ops ***
     SHL(Reg, Reg, Reg), // Shift Left
@@ -28,8 +36,8 @@ pub enum TextInstr {
     JL(BoolVal, Val, Reg, Reg), // Jump if less
     JE(BoolVal, Val, Reg, Reg), // Jump if equal
 
-    CMP(Reg, Reg),              // Compares Regs
-    HALT,              // Stop CPU
+    CMP(Reg, Reg), // Compares Regs
+    HALT,          // Stop CPU
 }
 impl TextInstr {
     pub fn from_str(line: &str) -> Result<Self> {
@@ -137,35 +145,141 @@ impl TextInstr {
                 Reg::from_str(arg2.unwrap())?,
             )),
             "HALT" | "halt" | "BREAK" | "break" => Ok(TextInstr::HALT),
-            _ => panic!("Instruction provided was invalid"),
+            _ => panic!("Instruction provided was invalid, {}", command),
         }
     }
     pub fn to_code(&self) -> Vec<u16> {
         match self {
-            TextInstr::SHL(_, _, _) => todo!(),
-            TextInstr::SHR(_, _, _) => todo!(),
-            TextInstr::AND(_, _, _) => todo!(),
-            TextInstr::NOT(_, _) => todo!(),
-            TextInstr::XOR(_, _, _) => todo!(),
-            TextInstr::OR(_, _, _) => todo!(),
-            TextInstr::ADD(_, _, _) => todo!(),
-            TextInstr::SUB(_, _, _) => todo!(),
-            TextInstr::INC(_, _) => todo!(),
-            TextInstr::DEC(_, _) => todo!(),
-            
-            TextInstr::STR(_, _) => todo!(),
-            TextInstr::LDR(_, _) => todo!(),
-            TextInstr::LDI(_, _) => todo!(),
-            TextInstr::MOV(_, _) => todo!(),
+            TextInstr::SHL(out_reg, reg_in_a, reg_in_b) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg_in_a.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg_in_b.to_code(),
+                    ALU | 0,
+                    MOVE | out_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            }
+            TextInstr::SHR(out_reg, reg_in_a, reg_in_b) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg_in_a.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg_in_b.to_code(),
+                    ALU | 1,
+                    MOVE | out_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            },
+            TextInstr::AND(out_reg, reg_in_a, reg_in_b) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg_in_a.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg_in_b.to_code(),
+                    ALU | 2,
+                    MOVE | out_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            },
+            TextInstr::NOT(out_reg, reg_in) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg_in.to_code(),
+                    ALU | 3,
+                    MOVE | out_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            },
+            TextInstr::XOR(out_reg, reg_in_a, reg_in_b) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg_in_a.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg_in_b.to_code(),
+                    ALU | 4,
+                    MOVE | out_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            },
+            TextInstr::OR(out_reg, reg_in_a, reg_in_b) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg_in_a.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg_in_b.to_code(),
+                    ALU | 5,
+                    MOVE | out_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            },
+            TextInstr::ADD(out_reg, reg_in_a, reg_in_b) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg_in_a.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg_in_b.to_code(),
+                    ALU | 6,
+                    MOVE | out_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            },
+            TextInstr::SUB(out_reg, reg_in_a, reg_in_b) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg_in_a.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg_in_b.to_code(),
+                    ALU | 7,
+                    MOVE | out_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            },
+            TextInstr::INC(dest_reg, src_reg) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | src_reg.to_code(),
+                    ALU | 9,
+                    MOVE | dest_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            }
+            TextInstr::DEC(dest_reg, src_reg) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | src_reg.to_code(),
+                    ALU | 10,
+                    MOVE | dest_reg.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            }
 
-            TextInstr::JMP(_, _) => todo!(),
-            TextInstr::JG(_, _, _, _) => todo!(),
-            TextInstr::JL(_, _, _, _) => todo!(),
-            TextInstr::JE(_, _, _, _) => todo!(),
+            TextInstr::STR(dest_addr, src_reg) => {
+                vec![STORE | src_reg.to_code() << 8 | dest_addr.0 as u16]
+            }
+            TextInstr::LDR(dest_reg, src_addr) => {
+                vec![LOAD | dest_reg.to_code() << 8 | src_addr.0 as u16]
+            }
+            TextInstr::LDI(dest_reg, val) => {
+                vec![LOADIMD | dest_reg.to_code() << 8 | val.0]
+            },
+            TextInstr::MOV(dest_reg, src_reg) => {
+                vec![MOVE | src_reg.to_code() << 4 | dest_reg.to_code()]
+            },
 
-            TextInstr::CMP(_, _) => todo!(),
-            TextInstr::HALT => vec![6 << 12],
-
+            TextInstr::JMP(dir, size) => {
+                vec![JUMP | 0 << 10 | dir.to_code() << 9 | size.0]
+            },
+            TextInstr::JG(dir, size, reg1, reg2) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg1.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg2.to_code(),
+                    ALU | 8,
+                    MOVE | Reg::FLAGS.to_code() << 4 | Reg::AluOut.to_code(),
+                    JUMP | 1 << 10 | dir.to_code() << 9 | size.0
+                ]
+            },
+            TextInstr::JL(dir, size, reg1, reg2) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg1.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg2.to_code(),
+                    ALU | 8,
+                    MOVE | Reg::FLAGS.to_code() << 4 | Reg::AluOut.to_code(),
+                    JUMP | 2 << 10 | dir.to_code() << 9 | size.0
+                ]
+            },
+            TextInstr::JE(dir, size, reg1, reg2) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg1.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg2.to_code(),
+                    ALU | 8,
+                    MOVE | Reg::FLAGS.to_code() << 4 | Reg::AluOut.to_code(),
+                    JUMP | 3 << 10 | dir.to_code() << 9 | size.0
+                ]
+            },
+            TextInstr::CMP(reg1, reg2) => {
+                vec![
+                    MOVE | Reg::AluA.to_code() << 4 | reg1.to_code(),
+                    MOVE | Reg::AluB.to_code() << 4 | reg2.to_code(),
+                    ALU | 8,
+                    MOVE | Reg::FLAGS.to_code() << 4 | Reg::AluOut.to_code(),
+                ]
+            },
+            TextInstr::HALT => vec![HALT],
         }
     }
 }
