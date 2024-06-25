@@ -12,7 +12,7 @@ use std::path;
 use lazy_static::lazy_static;
 
 lazy_static! {
-    static ref DEFAULT_OUT: String = format!("o{}", DBMEXEC_EXT);
+    static ref DEFAULT_OUT: String = format!("o.{}", DBMEXEC_EXT);
 }
 
 fn main() {
@@ -24,7 +24,7 @@ fn main() {
         .parse()
         .expect("Path provided was invalid");
 
-    if !file_path.ends_with(DBASM_EXT) {
+    if file_path.extension().unwrap() != DBASM_EXT {
         eprintln!("You must provide a .dbasm file, DroneBoi Assembly")
     }
     
@@ -33,7 +33,7 @@ fn main() {
         .parse()
         .expect("You provided an invalid path");
 
-    if !output_path.ends_with(DBMEXEC_EXT) {
+    if output_path.extension().unwrap() != DBMEXEC_EXT {
         eprintln!("It is best to end your output file with a .dbexec")
     }
 
