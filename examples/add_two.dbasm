@@ -1,9 +1,9 @@
-; Loading data 
-LDI rg1, 20
-LDI rg2, 120
+; Setting the registers
+LDI ra, 10
+LDI rb, 40
 
-; Adding the two numbers
-ADD rg1, rg1, rg2
+; Adding the values in ra and rb
+ADD
 
-; Putting it into RAM address 1
-STR 1, rg1
+; Storing value
+STR 1, ro
