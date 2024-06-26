@@ -1,3 +1,4 @@
+//! CLI tool for drone boi assembler
 
 use dbasm::{
     parse,
@@ -9,11 +10,6 @@ use dbasm::{
 use std::env;
 use std::fs;
 use std::path;
-use lazy_static::lazy_static;
-
-lazy_static! {
-    static ref DEFAULT_OUT: String = format!("o.{}", DBMEXEC_EXT);
-}
 
 const INVALID_PATH: &str = "Invalid Path";
 const NOT_DBASM_FILE: &str = "File Must End In .dbasm";
@@ -42,7 +38,7 @@ fn main() {
         .expect(MUST_BE_NUM);
     
     let output_path: path::PathBuf = args.next()
-        .unwrap_or(DEFAULT_OUT.to_string())
+        .unwrap_or(format!("o.{}", DBMEXEC_EXT))
         .parse()
         .expect(INVALID_PATH);
     if output_path.extension().unwrap() != DBMEXEC_EXT {
