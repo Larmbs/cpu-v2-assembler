@@ -1,0 +1,8 @@
+LDI ra, 10 ; Setting ra to 10
+LDI rb, 0  ; Setting rb to 0
+DEC      
+MOVE ra, ro
+CMP
+JE 1, 3 ; Jumping back to DEC command 
+; Run code after count down
+HALT

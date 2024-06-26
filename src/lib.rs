@@ -2,9 +2,7 @@
 
 use anyhow::Result;
 mod instr;
-mod optim;
 pub use instr::{Program, TextInstr};
-use optim::optimize;
 
 /// DroneBoi Assembly file extension
 pub const DBASM_EXT: &str = "dbasm";
@@ -33,7 +31,5 @@ pub fn to_code(program: Program) -> Vec<u16> {
         code.extend(instruction.to_code())
     }
 
-    let optimal_code = optimize(code);
-
-    optimal_code
+    code
 }
