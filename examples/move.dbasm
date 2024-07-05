@@ -1,0 +1,5 @@
+; Adding some values to registers
+LDI rg1, 20
+MOVE ra, rg1
+INC
+STR 1, ro
